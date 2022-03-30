@@ -66,6 +66,14 @@ public:
       EXPECT_EQ(measurement.update_vector_[i], true);
     }
   }
+
+  // start
+  void correct(const Range & range)
+  {
+    EXPECT_EQ(val,range.time_);
+    EXPECT_EQ(range.topic_name_, "topic");
+  }
+  // end
   void predict(
     const rclcpp::Time & /*reference_time*/,
     const rclcpp::Duration & /*delta*/) {}
@@ -77,7 +85,9 @@ public:
   FilterDerived2() {}
 
   void correct(const Measurement & /*measurement*/) {}
-
+  // start
+  void correct(const Range & /*range*/) {}
+  //
   void predict(
     const rclcpp::Time & /*reference_time*/,
     const rclcpp::Duration & /*delta*/) {}

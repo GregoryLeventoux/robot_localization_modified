@@ -83,15 +83,15 @@ public:
    */
   virtual void correct(const Measurement & measurement) = 0;
 
-  //start
+  // START PROJECT
   /**
-   * @brief Carries out the correct step in the predict/update cycle.
-   *
-   * @param[in] range - The range to fuse with our estimate
+   * @brief Carries out the correct step in the predict/update cycle. This
+   * method must be implemented by subclasses.
+   * @param[in] range - The range to fuse with the state estimate
    */
-  void correctWithRange(const Range & range);
+  virtual void correct(const Range & range) = 0;
 
-  //end
+  // END PROJECT
 
   /**
    * @brief Returns the control vector currently being used

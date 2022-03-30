@@ -283,6 +283,143 @@ void Ukf::correct(const Measurement & measurement)
   }
 }
 
+// START PROJECT
+
+void Ukf::correct(const Range & range)
+{
+  FB_DEBUG(
+    "---------------------- Ekf::correct ----------------------\n" <<
+      "State is:\n" <<
+      state_ <<
+      "\n"
+      "Topic is:\n" <<
+      range.topic_name_ <<
+      "\n"
+      "Measurement is:\n" <<
+      range.range_ <<
+      "\n"
+      "Measurement topic name is:\n" <<
+      range.topic_name_ <<
+      "\n\n"
+      "Measurement covariance is:\n" <<
+      range.covariance_ << "\n");
+
+  // We don't want to update everything, so we need to build matrices that only
+  // update the measured parts of our state vector. Throughout prediction and
+  // correction, we attempt to maximize efficiency in Eigen.
+
+
+  // Now set up the relevant matrices
+  Eigen::Vector3d state_subset;       // x (in most literature)
+  double measurement = range.range_;;  // z
+  double  covariance = range.covariance_;  // R
+  Eigen::Matrix<double,1,3> state_to_measurement_subset;  // H
+  Eigen::Matrix<double,3,1> kalman_gain_subset;          // K
+  double innovation = 0;  // z - g(x)
+  Eigen::Matrix<double,3,3> estimate_error_covariance_subset = estimate_error_covariance_.block(0,0,3,3);
+
+  state_subset.setZero();
+  state_to_measurement_subset.setZero();
+  kalman_gain_subset.setZero();
+
+  // Now build the sub-matrices from the full-sized matrices
+  for (size_t i = 0; i < 3; ++i)
+  {
+    state_subset(i) = state_(i);
+  }
+
+  // Handle negative (read: bad) covariances in the measurement. Rather
+  // than exclude the measurement or make up a covariance, just take
+  // the absolute value.
+  if (covariance < 0) {
+    FB_DEBUG(
+      "WARNING: Negative covariance for index " <<
+        0 << " of measurement (value is" <<
+        covariance <<
+        "). Using absolute value...\n");
+
+    covariance = ::fabs(covariance);
+  }
+
+  // If the measurement variance for a given variable is very
+  // near 0 (as in e-50 or so) and the variance for that
+  // variable in the covariance matrix is also near zero, then
+  // the Kalman gain computation will blow up. Really, no
+  // measurement can be completely without error, so add a small
+  // amount in that case.
+  if (covariance < 1e-9) {
+    FB_DEBUG(
+      "WARNING: measurement had very small error covariance for index " <<
+        0 <<
+        ". Adding some noise to maintain filter stability.\n");
+
+    covariance = 1e-9;
+  }
+
+  // The state-to-measurement function, h, will now be a measurement_size x
+  // full_state_size matrix, with ones in the (i, i) locations of the values to
+  // be updated
+
+  state_to_measurement_subset = 2*(state_subset - range.coordinates_);
+
+
+  FB_DEBUG(
+    "Current state subset is:\n" <<
+      state_subset << "\nMeasurement subset is:\n" <<
+      measurement << "\nMeasurement covariance subset is:\n" <<
+      covariance<<
+      "\nState-to-measurement subset is:\n" <<
+      state_to_measurement_subset << "\n");
+
+  // (1) Compute the Kalman gain: K = (PH') / (HPH' + R)
+  Eigen::Matrix<double,3,1> pht = estimate_error_covariance_subset * state_to_measurement_subset.transpose();
+  double hphr_inverse =1/(state_to_measurement_subset * pht + covariance);
+  kalman_gain_subset.noalias() = pht * hphr_inverse;
+
+  innovation = measurement - (state_subset - range.coordinates_).squaredNorm();
+
+  // (2) Check Mahalanobis distance between mapped measurement and state.
+  Eigen::VectorXd innovation_bis(1); innovation_bis << innovation;
+  Eigen::Matrix<double,1,1> hphr_inverse_bis;
+  hphr_inverse_bis(0,0) = hphr_inverse;
+  if (checkMahalanobisThreshold(
+      innovation_bis, hphr_inverse_bis,
+      range.mahalanobis_thresh_))
+  {
+    // (3) Apply the gain to the difference between the state and measurement: x
+    // = x + K(z - Hx)
+    Eigen::Vector3d state_subset_corrected = state_subset + kalman_gain_subset * innovation;
+    for (size_t i = 0; i < 3; i++)
+    {
+        state_(i) = state_subset_corrected(i);
+    }
+
+
+    // (4) Update the estimate error covariance using the Joseph form: (I -
+    // KH)P(I - KH)' + KRK'
+    Eigen::Matrix<double,3,3> gain_residual; gain_residual.setIdentity();
+    Eigen::Matrix<double,3,3> estimate_error_covariance_subset_corrected;
+    gain_residual.noalias() -= kalman_gain_subset * state_to_measurement_subset;
+    estimate_error_covariance_subset_corrected =
+    gain_residual * estimate_error_covariance_subset * gain_residual.transpose();
+    estimate_error_covariance_subset_corrected.noalias() += kalman_gain_subset * covariance * kalman_gain_subset.transpose();
+
+    // Handle wrapping of angles
+    wrapStateAngles();
+
+    FB_DEBUG(
+      "Kalman gain subset is:\n" <<
+        kalman_gain_subset << "\nInnovation is:\n" <<
+        innovation<< "\nCorrected full state is:\n" <<
+        state_ << "\nCorrected full estimate error covariance is:\n" <<
+        estimate_error_covariance_ <<
+        "\n\n---------------------- /Ekf::correct ----------------------\n");
+  }
+}
+
+// END PROJECT
+
+
 void Ukf::predict(
   const rclcpp::Time & reference_time,
   const rclcpp::Duration & delta)

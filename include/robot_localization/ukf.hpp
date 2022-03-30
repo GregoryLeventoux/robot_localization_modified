@@ -79,6 +79,18 @@ public:
    */
   void correct(const Measurement & measurement) override;
 
+  // START PROJECT
+
+  /**
+   * @brief Carries out the correct step in the predict/update cycle.
+   *
+   * @param[in] measurement - The measurement to fuse with our estimate
+   */
+  void correct(const Range & range) override;
+
+  // END PROJECT
+
+
   /**
    * @brief  Carries out the predict step in the predict/update cycle.
    *
