@@ -338,30 +338,6 @@ void RosFilter<T>::enqueueMeasurement(
   measurement_queue_.push(meas);
 }
 
-// start
-template<typename T>
-void RosFilter<T>::enqueueRange(
-  const std::string & topic_name,
-  const double & range,
-  const double & covariance,
-  const double & mahalanobis_thresh,
-  const Eigen::Vector3d & coordinates,
-  const rclcpp::Time & time)
-{
-  RangePtr meas = RangePtr(new Range());
-
-  meas->topic_name_ = topic_name;
-  meas->range_ = range;
-  meas->covariance_ = covariance;
-  meas->time_ = time;
-  meas->mahalanobis_thresh_ = mahalanobis_thresh;
-  meas->coordinates_ = coordinates;
-  meas->latest_control_ = latest_control_;
-  meas->latest_control_time_ = latest_control_time_;
-  range_queue_.push(meas);
-}
-// end
-
 
 template<typename T>
 void RosFilter<T>::forceTwoD(
@@ -2106,11 +2082,23 @@ void RosFilter<T>::poseCallback(
 }
 
 //start (PROJECT)
+
 template<typename T>
 void RosFilter<T>::rangeCallback(const range_msgs::msg::Range::SharedPtr msg, const CallbackRange & callback_range)
 {
-    enqueueRange(callback_range.topic_name_,msg->range, msg->covariance,callback_range.rejection_threshold_,callback_range.coordinates_, msg->header.stamp);
+  RangePtr range = RangePtr(new Range());
+
+  range->topic_name_ = callback_range.topic_name_;
+  range->range_ = msg->range,
+  range->covariance_ = msg->covariance;
+  range->time_ = msg->header.stamp;
+  range->mahalanobis_thresh_ = callback_range.rejection_threshold_;
+  range->coordinates_ = callback_range.coordinates_,
+  range->latest_control_ = latest_control_;
+  range->latest_control_time_ = latest_control_time_;
+  range_queue_.push(range);
 }
+
 //end (PROJECT)
 
 template<typename T>

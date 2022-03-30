@@ -196,28 +196,6 @@ public:
     const double mahalanobis_thresh,
     const rclcpp::Time & time);
 
-  //start
-  //! @brief Adds a range to the queue of ranges to be processed
-  //!
-  //! @param[in] topic_name - The name of the range source (only used for
-  //! debugging)
-  //! @param[in] range- The range to enqueue
-  //! @param[in] covariance - The covariance of the range
-  //! @param[in] update- The boolean that specifies which
-  //! variables to update from this range
-  //! @param[in] mahalanobis_thresh - Threshold, expressed as a Mahalanobis
-  //! distance, for outlier rejection
-  //! @param[in] time - The time of arrival (in seconds)
-  //!
-  void enqueueRange(
-    const std::string & topic_name,
-    const double & range,
-    const double & covariance,
-    const double & mahalanobis_thresh,
-    const Eigen::Vector3d & coordinates,
-    const rclcpp::Time & time);
-  //end
-
   //! @brief Method for zeroing out 3D variables within measurements
   //! @param[out] measurement - The measurement whose 3D variables will be
   //! zeroed out
