@@ -73,22 +73,22 @@ ekf_filter_node:
 
 
         range0: /range0
-        range0_coordinates: [-3.4,-4.5,0]
+        range0_coordinates: [-3.4,-4.5,0.0]
         range0_queue_size: 2
         range0_rejection_threshold: 2.0
         
         range1: /range1
-        range1_coordinates: [-3.7,-3.7,0]
+        range1_coordinates: [-3.7,-3.7,0.0]
         range1_queue_size: 2
         range1_rejection_threshold: 2.0
         
         range2: /range2
-        range2_coordinates: [10,3.6,0]
+        range2_coordinates: [10.0,3.6,0.0]
         range2_queue_size: 2
         range2_rejection_threshold: 2.0
         
         range3: /range3
-        range3_coordinates: [10,-5.8,0]
+        range3_coordinates: [10.0,-5.8,0.0]
         range3_queue_size: 2
         range3_rejection_threshold: 2.0
 
