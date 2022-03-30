@@ -744,7 +744,7 @@ void RosFilter<T>::integrateMeasurements(const rclcpp::Time & current_time)
           }
 
           // This will call predict and, if necessary, correct
-          filter_.processRange(*(range.get()));
+          filter_.processMeasurment(*(range.get()));
 
           // Store old states and measurements if we're smoothing
           if (smooth_lagged_data_) {

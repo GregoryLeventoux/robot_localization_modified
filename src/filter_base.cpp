@@ -265,10 +265,9 @@ void FilterBase::processMeasurement(const Measurement & measurement)
       ") ------\n");
 }
 
-
 // START PROJECT
 
-void FilterBase::processRange(const Range &range)
+void FilterBase::processMeasurment(const Range &range)
 {
   FB_DEBUG(
     "------ FilterBase::processMeasurement (" << range.topic_name_ <<

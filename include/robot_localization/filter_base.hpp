@@ -188,7 +188,7 @@ public:
    * @brief Does some final preprocessing, carries out the predict/update cycle
    * @param[in] measurement - The measurement object to fuse into the filter
    */
-  virtual void processRange(const Range & range);
+  virtual void processMeasurment(const Range & range);
 
   // END PROJECT
 
