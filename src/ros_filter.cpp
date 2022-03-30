@@ -615,12 +615,12 @@ void RosFilter<T>::integrateMeasurements(const rclcpp::Time & current_time)
         MeasurementPtr m = measurement_queue_.top();
         RangePtr r = range_queue_.top();
         if(m->time_ > r->time_){
-            measurment_time = m->time_;
-            topic_name = m->topic_name_;
-        }
-        else{
             measurment_time = r->time_;
             topic_name = r->topic_name_;
+        }
+        else{
+            measurment_time = m->time_;
+            topic_name = m->topic_name_;
         }
     }
 
@@ -668,7 +668,7 @@ void RosFilter<T>::integrateMeasurements(const rclcpp::Time & current_time)
           RangePtr r = range_queue_.top();
           range_time = r->time_;
       }
-      if(!measurement_queue_.empty() && (range_queue_.empty() || measurement_time > range_time )){
+      if(!measurement_queue_.empty() && (range_queue_.empty() || measurement_time < range_time )){
           MeasurementPtr measurement = measurement_queue_.top();
 
           // If we've reached a measurement that has a time later than now, it
@@ -715,7 +715,7 @@ void RosFilter<T>::integrateMeasurements(const rclcpp::Time & current_time)
           }
 
       }
-      else if(!range_queue_.empty() && (measurement_queue_.empty() || measurement_time < range_time )){
+      else if(!range_queue_.empty() && (measurement_queue_.empty() || measurement_time > range_time )){
          RangePtr range = range_queue_.top();
 
           // If we've reached a measurement that has a time later than now, it
@@ -762,9 +762,6 @@ void RosFilter<T>::integrateMeasurements(const rclcpp::Time & current_time)
           }
 
       }
-
-
-
     }
   } else if (filter_.getInitializedStatus()) {
     // In the event that we don't get any measurements for a long time,
