@@ -1,6 +1,6 @@
-robot_localization
-==================
+robot_localization_modified
+===========================
 
-robot_localization is a package of nonlinear state estimation nodes. The package was developed by Charles River Analytics, Inc.
+robot_localization_modified is a modified version of the famous package robot_localization made by two students in robotics in order to take account of range measurements provided by beacons. 
 
-Please see documentation here: http://wiki.ros.org/robot_localization
+
