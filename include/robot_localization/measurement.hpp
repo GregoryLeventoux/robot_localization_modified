@@ -104,7 +104,8 @@ struct Measurement
 };
 using MeasurementPtr = std::shared_ptr<Measurement>;
 
-//start
+// START PROJECT
+  
 struct Range
 {
   Range()
@@ -151,7 +152,8 @@ struct Range
 };
 
 using RangePtr = std::shared_ptr<Range>;
-//end
+  
+// END PROJECT
 
 }  // namespace robot_localization
 
