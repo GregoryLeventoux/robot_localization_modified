@@ -134,9 +134,12 @@ void RosFilter<T>::reset()
 
   clearMeasurementQueue();
 
-  //start
+  // START PROJECT
+  
   clearRangeQueue();
-  //end
+  
+  // END PROJECT
+  
   filter_state_history_.clear();
   measurement_history_.clear();
 
@@ -579,6 +582,8 @@ void RosFilter<T>::imuCallback(
   RF_DEBUG("\n----- /RosFilter<T>::imuCallback (" << topic_name << ") ------\n");
 }
 
+// START PROJECT
+  
 template<typename T>
 void RosFilter<T>::integrateMeasurements(const rclcpp::Time & current_time)
 {
@@ -801,6 +806,8 @@ void RosFilter<T>::integrateMeasurements(const rclcpp::Time & current_time)
   RF_DEBUG("\n----- /RosFilter<T>::integrateMeasurements ------\n");
 }
 
+// END PROJECT  
+  
 template<typename T>
 void RosFilter<T>::loadParams()
 {
@@ -1741,7 +1748,8 @@ void RosFilter<T>::loadParams()
     }
   } while (more_params);
 
-  //start (PROJRCT)
+  // START PROJECT
+  
   //Repeat for range
   size_t range_topic_ind = 0;
   bool more_range_params = false;
@@ -1785,7 +1793,8 @@ void RosFilter<T>::loadParams()
       }
 
   } while(more_range_params);
-  //end (PROJECT)
+  
+  // END PROJECT
 
   // Now that we've checked if IMU linear acceleration is being used, we can
   // determine our final control parameters
@@ -2078,7 +2087,7 @@ void RosFilter<T>::poseCallback(
   RF_DEBUG("\n----- /RosFilter<T>::poseCallback (" << topic_name << ") ------\n");
 }
 
-//start (PROJECT)
+// START PROJECT
 
 template<typename T>
 void RosFilter<T>::rangeCallback(const range_msgs::msg::Range::SharedPtr msg, const CallbackRange & callback_range)
@@ -2096,7 +2105,7 @@ void RosFilter<T>::rangeCallback(const range_msgs::msg::Range::SharedPtr msg, co
   range_queue_.push(range);
 }
 
-//end (PROJECT)
+// END PROJECT
 
 template<typename T>
 void RosFilter<T>::initialize()
@@ -3647,7 +3656,8 @@ void RosFilter<T>::clearMeasurementQueue()
   }
 }
 
-//start
+// START PROJECT
+  
 template<typename T>
 void RosFilter<T>::clearRangeQueue()
 {
@@ -3657,7 +3667,9 @@ void RosFilter<T>::clearRangeQueue()
     range_queue_.pop();
   }
 }
-//end
+  
+// END PROJECT
+  
 }  // namespace robot_localization
 
 template class robot_localization::RosFilter<robot_localization::Ekf>;
