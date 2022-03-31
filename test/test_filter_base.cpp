@@ -67,13 +67,16 @@ public:
     }
   }
 
-  // start
+  // START PROJECT
+  
   void correct(const Range & range)
   {
     EXPECT_EQ(val,range.time_);
     EXPECT_EQ(range.topic_name_, "topic");
   }
-  // end
+  
+  // END PROJECT
+  
   void predict(
     const rclcpp::Time & /*reference_time*/,
     const rclcpp::Duration & /*delta*/) {}
@@ -85,9 +88,13 @@ public:
   FilterDerived2() {}
 
   void correct(const Measurement & /*measurement*/) {}
-  // start
+  
+  // START PROJECT
+  
   void correct(const Range & /*range*/) {}
-  //
+  
+  // END PROJECT
+  
   void predict(
     const rclcpp::Time & /*reference_time*/,
     const rclcpp::Duration & /*delta*/) {}
