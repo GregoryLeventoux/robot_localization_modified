@@ -94,7 +94,8 @@ struct CallbackData
   double rejection_threshold_;
 };
 
-//start
+// START PROJECT
+  
 struct CallbackRange
 {
   CallbackRange(
@@ -107,7 +108,8 @@ struct CallbackRange
   double rejection_threshold_;
   Eigen::Vector3d coordinates_;
 };
-//end
+  
+// END PROJECT
 
 using MeasurementQueue =
   std::priority_queue<MeasurementPtr, std::vector<MeasurementPtr>,
@@ -115,10 +117,12 @@ using MeasurementQueue =
 using MeasurementHistoryDeque = std::deque<MeasurementPtr>;
 using FilterStateHistoryDeque = std::deque<FilterStatePtr>;
 
-//start
+// START PROJECT
+  
 using RangeQueue = std::priority_queue<RangePtr, std::vector<RangePtr>,Range>;
 using RangeHistoryDeque = std::deque<RangePtr>;
-//end
+  
+// END PROJECT
 
 template<class T>
 class RosFilter : public rclcpp::Node
@@ -299,13 +303,15 @@ public:
     const CallbackData & callback_data, const std::string & target_frame,
     const bool imu_data);
 
-  //start (PROJECT)
+  //  START PROJECT
+  
   //! @brief Callback method for receiving all range messages
   //! @param[in] msg - The ROS stamped rangewith covariance message to take in
   //! @param[in] callback_range - Relevant static callback range
   //!
   void rangeCallback(const range_msgs::msg::Range::SharedPtr msg, const CallbackRange & callback_range);
-  // end (PROJECT)
+  
+  // END PROJECT
 
   //! @brief initialize the filter
   //!
@@ -385,11 +391,13 @@ protected:
   //!
   void clearMeasurementQueue();
 
-  //start
+  // START PROJECT
+  
   //! @brief Clears range queue
   //!
   void clearRangeQueue();
-  //end
+  
+  // END PROJECT
 
   //! @brief Adds a diagnostic message to the accumulating map and updates the
   //! error level
@@ -646,9 +654,11 @@ protected:
   //!
   MeasurementQueue measurement_queue_;
 
-  //start (PROJECT)
+  // START PROJECT
+  
   RangeQueue range_queue_;
-  //end (PROJECT)
+  
+  // END PROJECT
 
   //! @brief Contains the state vector variable names in string format
   //!
@@ -711,24 +721,26 @@ protected:
   // back() refers to the measurement with the latest timestamp.
   MeasurementHistoryDeque measurement_history_;
 
-  //START PROJECT
+  // START PROJECT
 
-  //! @brief A deque of previous measurements which is implicitly ordered from
-  //! earliest to latest measurement.
-  // when popped from the measurement priority queue.
-  // front() refers to the measurement with the earliest timestamp.
-  // back() refers to the measurement with the latest timestamp.
+  //! @brief A deque of previous ranges which is implicitly ordered from
+  //! earliest to latest range.
+  // when popped from the range priority queue.
+  // front() refers to the range with the earliest timestamp.
+  // back() refers to the range with the latest timestamp.
   RangeHistoryDeque range_history_;
 
-  //END PROJECT
+  // END PROJECT
 
   //! @brief Vector to hold our subscribers until they go out of scope
   //!
   std::vector<rclcpp::SubscriptionBase::SharedPtr> topic_subs_;
 
-  //start (PROJECT)
+  // START PROJECT
+  
   std::vector<rclcpp::Subscription<range_msgs::msg::Range>::SharedPtr> range_topic_subs_;
-  //end (PROJECT)
+  
+  // END PROJECT
 
 
   //! @brief Stores the last measurement from a given topic for differential
